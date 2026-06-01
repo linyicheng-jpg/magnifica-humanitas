@@ -256,7 +256,7 @@
     </section>
 
     <section class="slide" data-index="1">
-      <img class="art" src="assets/slide-02.png" alt="" />
+      <img class="art" data-src="assets/slide-02.png" alt="" />
       <div class="wash right"></div>
       <div class="content right">
         <p class="eyebrow">01 · The New Babel</p>
@@ -271,7 +271,7 @@
     </section>
 
     <section class="slide" data-index="2" data-remotion="babel-vs-jerusalem">
-      <img class="art" src="assets/slide-03.png" alt="" />
+      <img class="art" data-src="assets/slide-03.png" alt="" />
       <div class="wash dark"></div>
       <div class="content center dark-copy">
         <p class="eyebrow">02 · Two Cities</p>
@@ -292,7 +292,7 @@
     </section>
 
     <section class="slide" data-index="3">
-      <img class="art" src="assets/slide-04.png" alt="" />
+      <img class="art" data-src="assets/slide-04.png" alt="" />
       <div class="wash"></div>
       <div class="content">
         <p class="eyebrow">03 · Irreducible Dignity</p>
@@ -306,7 +306,7 @@
     </section>
 
     <section class="slide" data-index="4" data-remotion="accountability-flow">
-      <img class="art" src="assets/slide-05.png" alt="" />
+      <img class="art" data-src="assets/slide-05.png" alt="" />
       <div class="wash right"></div>
       <div class="content right">
         <p class="eyebrow">04 · Accountability</p>
@@ -321,7 +321,7 @@
     </section>
 
     <section class="slide" data-index="5">
-      <img class="art" src="assets/slide-06.png" alt="" />
+      <img class="art" data-src="assets/slide-06.png" alt="" />
       <div class="wash"></div>
       <div class="content">
         <p class="eyebrow">05 · Truth</p>
@@ -336,7 +336,7 @@
     </section>
 
     <section class="slide" data-index="6">
-      <img class="art" src="assets/slide-07.png" alt="" />
+      <img class="art" data-src="assets/slide-07.png" alt="" />
       <div class="wash right"></div>
       <div class="content right">
         <p class="eyebrow">06 · Work</p>
@@ -351,7 +351,7 @@
     </section>
 
     <section class="slide" data-index="7">
-      <img class="art" src="assets/slide-08.png" alt="" />
+      <img class="art" data-src="assets/slide-08.png" alt="" />
       <div class="wash"></div>
       <div class="content">
         <p class="eyebrow">07 · Freedom</p>
@@ -365,7 +365,7 @@
     </section>
 
     <section class="slide" data-index="8">
-      <img class="art" src="assets/slide-09.png" alt="" />
+      <img class="art" data-src="assets/slide-09.png" alt="" />
       <div class="wash dark"></div>
       <div class="content dark-copy">
         <p class="eyebrow">08 · War</p>
@@ -379,7 +379,7 @@
     </section>
 
     <section class="slide" data-index="9" data-remotion="proximity-to-encounter">
-      <img class="art" src="assets/slide-10.png" alt="" />
+      <img class="art" data-src="assets/slide-10.png" alt="" />
       <div class="wash right"></div>
       <div class="content right">
         <p class="eyebrow">09 · Encounter</p>
@@ -394,7 +394,7 @@
     </section>
 
     <section class="slide" data-index="10" data-remotion="four-pillars">
-      <img class="art" src="assets/slide-11.png" alt="" />
+      <img class="art" data-src="assets/slide-11.png" alt="" />
       <div class="wash dark"></div>
       <div class="content center dark-copy">
         <p class="eyebrow">10 · Rebuilding</p>
@@ -409,7 +409,7 @@
     </section>
 
     <section class="slide" data-index="11">
-      <img class="art" src="assets/slide-12.png" alt="" />
+      <img class="art" data-src="assets/slide-12.png" alt="" />
       <div class="wash"></div>
       <div class="content">
         <p class="eyebrow">11 · Hope from Below</p>
@@ -437,8 +437,18 @@
     const bar = document.querySelector("#bar");
     let current = 0;
 
+    function ensureImageLoaded(index) {
+      const image = slides[index]?.querySelector(".art[data-src]");
+      if (image) {
+        image.src = image.dataset.src;
+        image.removeAttribute("data-src");
+      }
+    }
+
     function render(next) {
       current = Math.max(0, Math.min(slides.length - 1, next));
+      ensureImageLoaded(current);
+      ensureImageLoaded(current + 1);
       slides.forEach((slide, index) => {
         slide.classList.toggle("active", index === current);
         slide.classList.toggle("previous", index < current);
@@ -450,6 +460,9 @@
 
     function toggleOverview() {
       document.body.classList.toggle("overview");
+      if (document.body.classList.contains("overview")) {
+        slides.forEach((_, index) => ensureImageLoaded(index));
+      }
     }
 
     document.querySelector("#prev").addEventListener("click", () => render(current - 1));
