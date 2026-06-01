@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大光辉的人性 | Magnifica Humanitas</title>
+  <style>
+    :root {
+      --ivory: #f4f0e7;
+      --ivory-deep: #e7dfd1;
+      --ink: #171411;
+      --muted: #655e55;
+      --red: #8b0000;
+      --gold: #d4af37;
+      --serif: "EB Garamond", "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+      --hei-title: "方正兰亭特黑", "FZLanTingHeiS-DB-GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif;
+      --hei-body: "思源黑体", "Source Han Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #0d0b09; }
+    body {
+      overflow: hidden;
+      color: var(--ink);
+      font-family: var(--hei-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button { font: inherit; }
+    .deck { height: 100vh; position: relative; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(2.5%);
+      background: var(--ivory);
+      transition: opacity .45s ease, transform .55s cubic-bezier(.22,.61,.36,1), visibility .45s;
+    }
+    .slide.active { opacity: 1; visibility: visible; transform: translateX(0); }
+    .slide.previous { transform: translateX(-2.5%); }
+    .slide::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(23,20,17,.12);
+      box-shadow: inset 0 0 8vw rgba(62,43,22,.08);
+    }
+
+    .art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.9) contrast(.98);
+    }
+    .wash {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(244,240,231,.99) 0%, rgba(244,240,231,.92) 34%, rgba(244,240,231,.18) 68%, rgba(244,240,231,.04) 100%);
+    }
+    .wash.right { background: linear-gradient(270deg, rgba(244,240,231,.99) 0%, rgba(244,240,231,.93) 35%, rgba(244,240,231,.18) 69%, rgba(244,240,231,.02) 100%); }
+    .wash.soft { background: linear-gradient(180deg, rgba(244,240,231,.94), rgba(244,240,231,.06) 39%, rgba(244,240,231,.12)); }
+    .wash.dark { background: linear-gradient(90deg, rgba(14,12,10,.86), rgba(14,12,10,.28) 60%, rgba(14,12,10,.08)); }
+
+    .content {
+      z-index: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: min(49vw, 880px);
+      padding: 7.2vw 6.8vw;
+    }
+    .content.right { margin-left: auto; }
+    .content.center {
+      width: min(82vw, 1440px);
+      margin: auto;
+      padding: 5vw;
+      text-align: center;
+      align-items: center;
+    }
+    .content.bottom {
+      justify-content: flex-end;
+      width: min(76vw, 1320px);
+      padding-bottom: 8vw;
+    }
+    .eyebrow {
+      margin: 0 0 1.5rem;
+      color: var(--red);
+      font-family: var(--serif);
+      font-size: clamp(.86rem, 1.1vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    h1, h2 {
+      margin: 0;
+      max-width: 12em;
+      color: var(--ink);
+      font-family: var(--hei-title);
+      font-weight: 900;
+      letter-spacing: -.055em;
+      line-height: .98;
+    }
+    h1 { font-size: clamp(4.3rem, 8vw, 10.4rem); }
+    h2 { font-size: clamp(3.2rem, 5.4vw, 7.5rem); }
+    .en-title {
+      display: block;
+      margin-top: 1.2rem;
+      color: var(--red);
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 2.2vw, 2.8rem);
+      font-style: italic;
+      font-weight: 500;
+      letter-spacing: .01em;
+      line-height: 1.05;
+    }
+    .rule { width: 4.5rem; height: 2px; margin: 2rem 0; background: var(--gold); }
+    .copy { display: grid; gap: .9rem; max-width: 43rem; margin: 0; padding: 0; list-style: none; }
+    .copy li { color: #28231e; font-size: clamp(1.05rem, 1.44vw, 1.75rem); font-weight: 650; line-height: 1.42; }
+    .copy em {
+      display: block;
+      margin-top: .16rem;
+      color: var(--muted);
+      font-family: var(--serif);
+      font-size: .82em;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+    .dark-copy h1, .dark-copy h2, .dark-copy .copy li { color: #fbf5ea; }
+    .dark-copy .copy em { color: rgba(251,245,234,.76); }
+    .dark-copy .eyebrow { color: var(--gold); }
+    .dark-copy .en-title { color: #e7c858; }
+
+    .quote {
+      max-width: 14em;
+      font-family: var(--hei-title);
+      font-size: clamp(3rem, 5.8vw, 8rem);
+      font-weight: 900;
+      letter-spacing: -.06em;
+      line-height: 1.07;
+    }
+    .quote .en-title { max-width: 22em; font-size: clamp(1.45rem, 2.25vw, 3rem); line-height: 1.08; }
+    .slide[data-index="6"] h2 { font-size: clamp(2.9rem, 4.85vw, 6.7rem); }
+    .slide[data-index="11"] .quote { font-size: clamp(2.85rem, 5.25vw, 7.2rem); }
+    .statement {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      width: min(78vw, 1380px);
+      margin-top: 2.2rem;
+      background: rgba(244,240,231,.48);
+      border: 1px solid rgba(244,240,231,.36);
+      backdrop-filter: blur(8px);
+    }
+    .statement div { min-height: 13rem; padding: 2rem; background: rgba(18,15,12,.52); text-align: left; }
+    .statement strong { display: block; color: #fff8e9; font-size: clamp(1.8rem, 3vw, 4rem); line-height: 1; }
+    .statement span { display: block; margin-top: .7rem; color: #e5c456; font-family: var(--serif); font-size: clamp(1.05rem, 1.4vw, 1.7rem); }
+    .statement p { margin: 1rem 0 0; color: rgba(255,248,233,.78); font-size: clamp(.9rem, 1.08vw, 1.35rem); line-height: 1.45; }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      width: min(90vw, 1560px);
+      margin-top: 2.4rem;
+      border: 1px solid rgba(244,240,231,.34);
+      background: rgba(244,240,231,.36);
+      backdrop-filter: blur(10px);
+    }
+    .pillar { min-height: 14rem; padding: 1.7rem; background: rgba(20,16,13,.62); text-align: left; }
+    .pillar .n { color: var(--gold); font-family: var(--serif); font-size: 1.1rem; }
+    .pillar h3 { margin: 1.6rem 0 .5rem; color: #fff8e9; font-size: clamp(1.5rem, 2.1vw, 2.7rem); }
+    .pillar p { margin: 0; color: rgba(255,248,233,.74); font-family: var(--serif); font-size: clamp(.92rem, 1.12vw, 1.3rem); line-height: 1.35; }
+
+    .meta {
+      z-index: 3;
+      position: fixed;
+      right: 2.2rem;
+      bottom: 1.9rem;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      color: rgba(244,240,231,.84);
+      font-family: var(--serif);
+      font-size: .92rem;
+      letter-spacing: .08em;
+      mix-blend-mode: difference;
+    }
+    .progress { width: 7rem; height: 1px; background: rgba(244,240,231,.34); }
+    .progress span { display: block; height: 100%; background: var(--gold); transition: width .35s ease; }
+    .controls { z-index: 4; position: fixed; left: 2rem; bottom: 1.5rem; display: flex; gap: .5rem; opacity: .72; }
+    .controls button {
+      width: 2.35rem; height: 2.35rem; border: 1px solid rgba(244,240,231,.42); border-radius: 50%;
+      background: rgba(18,15,12,.34); color: #fff8e9; cursor: pointer; transition: .2s ease;
+    }
+    .controls button:hover { border-color: var(--gold); background: rgba(18,15,12,.72); }
+    .source {
+      z-index: 3;
+      position: fixed;
+      left: 2.3rem;
+      top: 1.8rem;
+      color: rgba(255,248,233,.74);
+      font-family: var(--serif);
+      font-size: .78rem;
+      letter-spacing: .11em;
+      mix-blend-mode: difference;
+    }
+
+    .overview { overflow: auto; background: #171411; }
+    .overview .deck { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; height: auto; padding: 1rem; }
+    .overview .slide { position: relative; visibility: visible; opacity: 1; aspect-ratio: 16/9; transform: none; overflow: hidden; cursor: pointer; }
+    .overview .slide .content { transform: scale(.32); transform-origin: left center; width: 145vw; }
+    .overview .slide .content.right { transform-origin: right center; }
+    .overview .slide .content.center { transform-origin: center center; }
+    .overview .slide .wash { opacity: .95; }
+    .overview .meta, .overview .controls, .overview .source { display: none; }
+
+    @media (max-width: 900px) {
+      .source { display: none; }
+      .content { width: min(88vw, 700px); padding: 8vw; }
+      .content.right { width: min(88vw, 700px); }
+      h1 { font-size: clamp(3rem, 14vw, 6rem); }
+      h2 { font-size: clamp(2.45rem, 10vw, 5rem); }
+      .quote { font-size: clamp(2.5rem, 10vw, 5rem); }
+      .eyebrow { margin-bottom: 1rem; font-size: .78rem; }
+      .en-title { margin-top: .75rem; font-size: clamp(1.12rem, 4.6vw, 2rem); }
+      .rule { margin: 1.25rem 0; }
+      .copy { gap: .72rem; }
+      .copy li { font-size: clamp(.88rem, 3.8vw, 1.25rem); }
+      .statement { width: 86vw; }
+      .pillars { grid-template-columns: repeat(2, 1fr); width: 88vw; }
+      .pillar { min-height: 9rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck">
+    <section class="slide active" data-index="0">
+      <img class="art" src="assets/slide-01.png" alt="" />
+      <div class="wash"></div>
+      <div class="content">
+        <p class="eyebrow">Magnifica Humanitas · 2026</p>
+        <h1>人类，站在岔路口<span class="en-title">Humanity at the Crossroads</span></h1>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>技术正在加速。人的方向感却没有同步更新。<em>Technology is accelerating. Our moral compass is not.</em></li>
+          <li>真正的问题不是：机器能做什么？<em>The real question is not what machines can do.</em></li>
+          <li>而是：我们要成为什么样的人？<em>It is who we choose to become.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="1">
+      <img class="art" src="assets/slide-02.png" alt="" />
+      <div class="wash right"></div>
+      <div class="content right">
+        <p class="eyebrow">01 · The New Babel</p>
+        <h2>当能力成为新的偶像<span class="en-title">When Power Becomes the New Idol</span></h2>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>技术开始分配机会、注意力与话语权。<em>Technology now allocates opportunity, attention and voice.</em></li>
+          <li>少数人控制基础设施。多数人承担后果。<em>A few control the infrastructure. Many bear the consequences.</em></li>
+          <li>效率一旦失去尺度，就会变成支配。<em>Efficiency without measure becomes domination.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="2" data-remotion="babel-vs-jerusalem">
+      <img class="art" src="assets/slide-03.png" alt="" />
+      <div class="wash dark"></div>
+      <div class="content center dark-copy">
+        <p class="eyebrow">02 · Two Cities</p>
+        <h2>巴别塔，还是耶路撒冷？<span class="en-title">Babel or Jerusalem?</span></h2>
+        <div class="statement">
+          <div data-remotion-part="babel">
+            <strong>统一 · 封闭 · 攀升</strong>
+            <span>Uniform · Closed · Rising upward</span>
+            <p>文明的高度，不由塔尖决定。<br />A civilization is not measured by its tallest tower.</p>
+          </div>
+          <div data-remotion-part="jerusalem">
+            <strong>协作 · 多元 · 修复</strong>
+            <span>Plural · Collaborative · Rebuilt together</span>
+            <p>而由谁被允许留在城中决定。<br />It is measured by who is welcomed inside.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-index="3">
+      <img class="art" src="assets/slide-04.png" alt="" />
+      <div class="wash"></div>
+      <div class="content">
+        <p class="eyebrow">03 · Irreducible Dignity</p>
+        <div class="quote">人，无法被压缩成变量<span class="en-title">A Person Cannot Be Reduced to Variables</span></div>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>人的价值，不来自效率。<em>Human worth does not come from efficiency.</em></li>
+          <li>尊严先于计算。<em>Dignity comes before computation.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="4" data-remotion="accountability-flow">
+      <img class="art" src="assets/slide-05.png" alt="" />
+      <div class="wash right"></div>
+      <div class="content right">
+        <p class="eyebrow">04 · Accountability</p>
+        <h2>没有透明，就没有责任<span class="en-title">No Transparency, No Accountability</span></h2>
+        <div class="rule" data-remotion-part="flow-line"></div>
+        <ul class="copy">
+          <li>决策可以自动化。责任不能。<em>Decisions may be automated. Responsibility cannot.</em></li>
+          <li>黑箱不是技术细节，而是公共问题。<em>Opacity is not a technical detail. It is a public issue.</em></li>
+          <li>人必须保留理解、质疑与拒绝的权利。<em>People must retain the right to understand, question and refuse.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="5">
+      <img class="art" src="assets/slide-06.png" alt="" />
+      <div class="wash"></div>
+      <div class="content">
+        <p class="eyebrow">05 · Truth</p>
+        <h2>没有真实，就没有共同体<span class="en-title">Without Truth, There Is No Community</span></h2>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>信息更多，不等于我们更接近真相。<em>More information does not mean more truth.</em></li>
+          <li>当事实被稀释，信任首先崩塌。<em>When facts dissolve, trust collapses first.</em></li>
+          <li>验证、倾听、对话，是新的公民能力。<em>Verification, listening and dialogue are civic skills.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="6">
+      <img class="art" src="assets/slide-07.png" alt="" />
+      <div class="wash right"></div>
+      <div class="content right">
+        <p class="eyebrow">06 · Work</p>
+        <h2>让机器辅助劳动，而不是抹除劳动者<span class="en-title">Let Machines Assist Work, Not Erase Workers</span></h2>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>工作不只是收入。它也是参与、成长与尊严。<em>Work is more than income. It is participation, growth and dignity.</em></li>
+          <li>自动化应该减少负担。<em>Automation should reduce burdens.</em></li>
+          <li>而不是把人变成成本。<em>It should not reduce people to costs.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="7">
+      <img class="art" src="assets/slide-08.png" alt="" />
+      <div class="wash"></div>
+      <div class="content">
+        <p class="eyebrow">07 · Freedom</p>
+        <h2>自由，先从守住注意力开始<span class="en-title">Freedom Begins with Attention</span></h2>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>最深的控制，不一定来自命令。<em>The deepest control does not always come from commands.</em></li>
+          <li>当注意力被商品化，内心会逐渐失去安静。<em>When attention is commodified, inner silence fades.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="8">
+      <img class="art" src="assets/slide-09.png" alt="" />
+      <div class="wash dark"></div>
+      <div class="content dark-copy">
+        <p class="eyebrow">08 · War</p>
+        <h2>责任不能藏在瞄准线之后<span class="en-title">Responsibility Cannot Hide Behind a Targeting Line</span></h2>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>当发动攻击变得更容易，克制就变得更稀缺。<em>When force becomes easier, restraint becomes rarer.</em></li>
+          <li>最终决定必须属于人。<em>The final decision must remain human.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="9" data-remotion="proximity-to-encounter">
+      <img class="art" src="assets/slide-10.png" alt="" />
+      <div class="wash right"></div>
+      <div class="content right">
+        <p class="eyebrow">09 · Encounter</p>
+        <h2>连接，不等于共同体<span class="en-title">Connection Is Not Community</span></h2>
+        <div class="rule" data-remotion-part="network-line"></div>
+        <ul class="copy">
+          <li>网络制造接近。<em>Networks create proximity.</em></li>
+          <li>共同体需要承诺。<em>Community requires commitment.</em></li>
+          <li>被动的相互依赖，必须转化为主动的团结。<em>Passive interdependence must become chosen solidarity.</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-index="10" data-remotion="four-pillars">
+      <img class="art" src="assets/slide-11.png" alt="" />
+      <div class="wash dark"></div>
+      <div class="content center dark-copy">
+        <p class="eyebrow">10 · Rebuilding</p>
+        <h2>未来不是等待出来的<span class="en-title">The Future Must Be Built</span></h2>
+        <div class="pillars">
+          <div class="pillar" data-remotion-part="pillar-1"><span class="n">01</span><h3>真实</h3><p>Truth<br />Protect our capacity to judge together.</p></div>
+          <div class="pillar" data-remotion-part="pillar-2"><span class="n">02</span><h3>教育</h3><p>Education<br />Cultivate discernment, not only skills.</p></div>
+          <div class="pillar" data-remotion-part="pillar-3"><span class="n">03</span><h3>关系</h3><p>Relationships<br />Turn proximity into encounter.</p></div>
+          <div class="pillar" data-remotion-part="pillar-4"><span class="n">04</span><h3>和平</h3><p>Peace<br />Make technology serve justice.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-index="11">
+      <img class="art" src="assets/slide-12.png" alt="" />
+      <div class="wash"></div>
+      <div class="content">
+        <p class="eyebrow">11 · Hope from Below</p>
+        <div class="quote">真正的进步，不会把任何人留在阴影里<span class="en-title">True Progress Leaves No One in the Shadows</span></div>
+        <div class="rule"></div>
+        <ul class="copy">
+          <li>从最弱小的人开始判断技术。<em>Judge technology from the perspective of the most vulnerable.</em></li>
+          <li>人类不是系统的附件。人本身，就是目的。<em>Humanity is not an accessory to the system. The human person is the purpose.</em></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <div class="source">LEO XIV · MAGNIFICA HUMANITAS</div>
+  <div class="controls">
+    <button id="prev" aria-label="上一页">←</button>
+    <button id="overview" aria-label="概览">□</button>
+    <button id="next" aria-label="下一页">→</button>
+  </div>
+  <div class="meta"><span id="page">01 / 12</span><div class="progress"><span id="bar"></span></div></div>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const page = document.querySelector("#page");
+    const bar = document.querySelector("#bar");
+    let current = 0;
+
+    function render(next) {
+      current = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach((slide, index) => {
+        slide.classList.toggle("active", index === current);
+        slide.classList.toggle("previous", index < current);
+      });
+      page.textContent = `${String(current + 1).padStart(2, "0")} / ${slides.length}`;
+      bar.style.width = `${((current + 1) / slides.length) * 100}%`;
+      history.replaceState(null, "", `#${current + 1}`);
+    }
+
+    function toggleOverview() {
+      document.body.classList.toggle("overview");
+    }
+
+    document.querySelector("#prev").addEventListener("click", () => render(current - 1));
+    document.querySelector("#next").addEventListener("click", () => render(current + 1));
+    document.querySelector("#overview").addEventListener("click", toggleOverview);
+    slides.forEach((slide, index) => slide.addEventListener("click", () => {
+      if (document.body.classList.contains("overview")) {
+        document.body.classList.remove("overview");
+        render(index);
+      }
+    }));
+
+    addEventListener("keydown", (event) => {
+      if (["ArrowRight", " ", "PageDown"].includes(event.key)) render(current + 1);
+      if (["ArrowLeft", "PageUp"].includes(event.key)) render(current - 1);
+      if (event.key.toLowerCase() === "o") toggleOverview();
+      if (event.key === "Home") render(0);
+      if (event.key === "End") render(slides.length - 1);
+    });
+
+    const initial = Number(location.hash.replace("#", "")) - 1;
+    render(Number.isFinite(initial) && initial >= 0 ? initial : 0);
+  </script>
+</body>
+</html>
